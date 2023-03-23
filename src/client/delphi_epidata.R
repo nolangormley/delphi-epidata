@@ -17,6 +17,11 @@ Epidata <- (function() {
 
   client_version <- '0.4.6'
 
+  auth <- getOption("epidata.auth", default = NA)
+  if (is.na(auth)) {
+    warn("Option epidata.auth not set. An API key will soon be required for all queries. For more information, visit TODO:URL.")
+  }
+
   # Helper function to cast values and/or ranges to strings
   .listitem <- function(value) {
     if(is.list(value) && 'from' %in% names(value) && 'to' %in% names(value)) {
@@ -37,9 +42,15 @@ Epidata <- (function() {
   # Helper function to request and parse epidata
   .request <- function(params) {
     # API call
-    res <- GET(BASE_URL, query=params)
+    res <- GET(BASE_URL,
+               user_agent(paste("delphi_epidata", client_version, "R", sep="/")),
+               add_headers(Authorization = paste("Bearer", auth)),
+               query=params)
     if (res$status_code == 414) {
-      res <- POST(BASE_URL, body=params, encode='form')
+      res <- POST(BASE_URL,
+                  user_agent(paste("delphi_epidata", client_version, "R", sep="/")),
+                  add_headers(Authorization = paste("Bearer", auth)),
+                  body=params, encode='form')
     }
     return(content(res, 'parsed'))
   }
