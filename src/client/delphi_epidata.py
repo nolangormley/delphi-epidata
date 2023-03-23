@@ -59,6 +59,8 @@ class Epidata:
   @retry(reraise=True, stop=stop_after_attempt(2))
   def _request_with_retry(params):
     """Make request with a retry if an exception is thrown."""
+    if Epidata.auth is None:
+      warn("Epidata.auth not set. An API key will soon be required for all queries. For more information, visit TODO:URL.")
     req = requests.get(Epidata.BASE_URL, params, auth=Epidata.auth, headers=_HEADERS)
     if req.status_code == 414:
       req = requests.post(Epidata.BASE_URL, params, auth=Epidata.auth, headers=_HEADERS)
