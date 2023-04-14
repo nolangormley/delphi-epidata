@@ -23,6 +23,7 @@
 })(this, function (exports, fetchImpl, jQuery) {
   const BASE_URL = "https://delphi.cmu.edu/epidata/";
   const client_version = "0.4.6";
+  var API_KEY = null;
 
   // Helper function to cast values and/or ranges to strings
   function _listitem(value) {
@@ -59,12 +60,24 @@
     const isCompatibility = baseURL.endsWith(".php");
     const requestUrl = isCompatibility ? baseURL : baseURL + endpoint + "/";
     const url = new URL(requestUrl);
+    var HEADERS = {
+      'Content-Type': 'application/json'
+    }
 
     const cleanParams = {};
     if (isCompatibility) {
       cleanParams.endpoint = endpoint;
       url.searchParams.set("endpoint", endpoint);
     }
+
+    if (API_KEY == null) {
+      console.warn('Epidata.API_KEY not set. An API key will soon be required for all queries. For more information, visit TODO:URL.')
+    } else {
+      HEADERS['Authorization'] = `Bearer ${API_KEY}`
+    }
+
+    console.log(HEADERS)
+
     Object.keys(params).forEach((key) => {
       const v = params[key];
       if (v != null) {
@@ -79,15 +92,19 @@
         dataType: "json",
         method: usePOST ? "POST" : "GET",
         data: cleanParams,
+        headers: HEADERS
       });
     }
     if (usePOST) {
       return fetchImpl(requestUrl, {
         method: "POST",
         body: url.searchParams,
+        headers: HEADERS
       }).then((r) => r.json());
     }
-    return fetchImpl(url).then((r) => r.json());
+    return fetchImpl(url, {
+        headers: HEADERS
+    }).then((r) => r.json());
   }
 
   function requireAll(obj) {
@@ -122,6 +139,14 @@
       client_version,
       version: () => {
         return _request('version', {}).then((r) => Object.assign(r, {client_version}));
+      },
+      /**
+       * Authenticate session with API key
+       */
+      authenticate: (api_key) => {
+        requireAll({ api_key });
+        API_KEY = api_key;
+        return _request("covidcast_meta", {});
       },
       /**
        * Fetch AFHSB data (point data, no min/max)

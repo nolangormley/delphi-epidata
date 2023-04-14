@@ -22,4 +22,14 @@
     "2020-12-01",
     "ca"
   );
+  Epidata.authenticate(cb, 'foobar');
+  Epidata.covidcast(
+    cb,
+    "fb-survey",
+    Array(1000).fill("raw_cli").join(","),
+    "day",
+    "state",
+    "2020-12-01",
+    "ca"
+  );
 </script>
