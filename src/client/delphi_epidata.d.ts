@@ -20,6 +20,7 @@ declare module 'delphi_epidata' {
         client_version: string;
         version(): Promise<{version: string, client_version: string}>;
 
+        authenticate(callback: EpiDataCallBack, api_key: string);
         afhsb(callback: EpiDataCallback, auth: string, locations: StringParam, epiweeks: EpiRangeParam, flu_types: StringParam): Promise<EpiDataResponse>;
         cdc(callback: EpiDataCallback, auth: string, epiweeks: EpiRangeParam, locations: StringParam): Promise<EpiDataResponse>;
         covid_hosp_facility(callback: EpiDataCallback, hospital_pks: StringParam, collection_weeks: EpiRangeParam, publication_dates: EpiRangeParam): Promise<EpiDataResponse>;
@@ -61,6 +62,7 @@ declare module 'delphi_epidata' {
         client_version: string;
         version(): Promise<{ version: string, client_version: string }>;
 
+        authenticate(callback: EpiDataCallBack, api_key: string);
         afhsb(auth: string, locations: StringParam, epiweeks: EpiRangeParam, flu_types: StringParam): Promise<EpiDataResponse>;
         cdc(auth: string, epiweeks: EpiRangeParam, locations: StringParam): Promise<EpiDataResponse>;
         covid_hosp_facility(hospital_pks: StringParam, collection_weeks: EpiRangeParam, publication_dates: EpiRangeParam): Promise<EpiDataResponse>;

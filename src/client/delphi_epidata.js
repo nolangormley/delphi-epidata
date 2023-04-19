@@ -146,7 +146,7 @@
       authenticate: (api_key) => {
         requireAll({ api_key });
         API_KEY = api_key;
-        return _request("covidcast_meta", {});
+        return _request('authenticate', {})
       },
       /**
        * Fetch AFHSB data (point data, no min/max)
